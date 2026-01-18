@@ -1,6 +1,8 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs'
 import { generateToken } from "../lib/utils.js";
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import "dotenv/config";
 
 
 export const signup = async (req, res) => {
@@ -17,7 +19,6 @@ export const signup = async (req, res) => {
         message: 'Password must at least 6 characters'
       });
     }
- 
 
     /* Email validation */
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,7 +46,7 @@ export const signup = async (req, res) => {
     const newUser = new User({
       fullName,
       email,
-      password:hashedPassword,
+      password: hashedPassword,
     })
 
     if (newUser) {
@@ -53,23 +54,30 @@ export const signup = async (req, res) => {
       const savedUser = await newUser.save();
 
       // function for authenticating user
-      generateToken(savedUser._id, res); 
+      generateToken(savedUser._id, res);
 
       res.status(201).json({
         _id: savedUser._id,
-        fullName:savedUser.fullName,
-        email:savedUser.email,
-        profilePic:savedUser.profilePic,
+        fullName: savedUser.fullName,
+        email: savedUser.email,
+        profilePic: savedUser.profilePic,
       });
 
-    }else{
+      //Send a welcome email
+      try {
+        await sendWelcomeEmail(savedUser.email, savedUser.fullName, process.env.CLIENT_URL);
+      } catch (error) {
+        console.error("failed to send welcome email:", error);
+      }
+
+    } else {
       res.status(400).json({
-        message:"Invalid user data"
+        message: "Invalid user data"
       })
     }
 
   } catch (error) {
-    console.log("Error in signup controller: ",error);
+    console.log("Error in signup controller: ", error);
     res.status(500).json({
       message: "Internal server error"
     });
