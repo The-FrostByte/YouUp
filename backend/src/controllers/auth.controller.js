@@ -63,12 +63,15 @@ export const signup = async (req, res) => {
         profilePic: savedUser.profilePic,
       });
 
-      //Send a welcome email
-      try {
-        await sendWelcomeEmail(savedUser.email, savedUser.fullName, process.env.CLIENT_URL);
-      } catch (error) {
-        console.error("failed to send welcome email:", error);
-      }
+      // Send welcome email (non-blocking)
+      sendWelcomeEmail(
+        savedUser.email,
+        savedUser.fullName,
+        process.env.CLIENT_URL
+      ).catch(error => {
+        console.error("Failed to send welcome email:", error);
+      });
+
 
     } else {
       res.status(400).json({
