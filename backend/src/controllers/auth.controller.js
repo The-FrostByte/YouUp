@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs'
 import { generateToken } from "../lib/utils.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import "dotenv/config";
+import e from "express";
 
 
 export const signup = async (req, res) => {
@@ -87,6 +88,13 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) =>{
   const { email, password} = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message:"Email and password are required"
+    });
+  }
+
   try {
     const user = await User.findOne({email});
 
@@ -99,7 +107,7 @@ export const login = async (req, res) =>{
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect){
-      res.status(400).json({
+     return res.status(400).json({
         message:"Invalid email or password"
       })
     }
@@ -123,10 +131,17 @@ export const login = async (req, res) =>{
 
 }
 
-export const logout = (_, res) =>{ // not async and req is never used
-  
-  res.cookie("jwt","",{maxAge:0})
+export const logout = (_, res) => {
+  const { NODE_ENV } = process.env;
+
+  res.cookie("jwt", "", {
+    maxAge: 0, // expire immediately
+    httpOnly: true,
+    sameSite: "strict",
+    secure: NODE_ENV === "development" ? false : true,
+  });
+
   res.status(200).json({
-    message:"Logout successfully"
-  })
-}
+    message: "Logged out successfully",
+  });
+};
