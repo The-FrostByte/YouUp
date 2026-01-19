@@ -63,7 +63,7 @@ export const signup = async (req, res) => {
         profilePic: savedUser.profilePic,
       });
 
-      // Send welcome email (non-blocking)
+    // Send welcome email (non-blocking)
       sendWelcomeEmail(
         savedUser.email,
         savedUser.fullName,
