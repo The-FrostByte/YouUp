@@ -1,7 +1,7 @@
 //const express = require('express');
 
 import express from 'express';
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
@@ -9,7 +9,7 @@ import path from "path";
 import { connectDB } from './lib/db.js';
 import { ENV } from "./lib/env.js";
 
-dotenv.config()
+//dotenv.config()
 
 const app = express();
 const __dirname = path.resolve(); //Tells you -> where am i now
