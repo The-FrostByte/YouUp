@@ -27,7 +27,7 @@ export const protectedRoute = async (req, res, next)=>{
         message:"user not found"
       })
     }
-    req.user = user;
+    req.user = user; //adding user property in req object
     next();
 
   } catch (error) {   
