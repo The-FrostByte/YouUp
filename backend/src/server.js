@@ -17,7 +17,9 @@ const __dirname = path.resolve(); //Tells you -> where am i now
 
 const PORT = ENV.PORT || 3000;
 
-app.use(express.json()) // to use req.body
+app.use(express.json({ limit: "10mb" }));// to use req.body
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
 app.use(cors({
   origin: ENV.CLIENT_URL,
   credentials: true,
