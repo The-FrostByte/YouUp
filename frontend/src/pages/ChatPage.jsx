@@ -1,18 +1,42 @@
 import React from 'react'
-import { useAuthStore } from '../store/useAuthStore'
+import { useChatStore } from '../store/useChatStore'
+import BorderAnimatedContainer from '../components/BorderAnimatedContainer.jsx';
+import  ProfileHeader  from '../components/ProfileHeader.jsx';
+import  ActiveTabSwitch  from '../components/ActiveTabSwitch.jsx';
+import  ChatsList  from '../components/ChatList.jsx';
+import  ContactList  from '../components/ContactList.jsx';
+import ChatContainer from '../components/ChatContainer.jsx';
+import NoConversationPlaceholder  from '../components/NoConversationPlaceholder.jsx';
 
 function ChatPage() {
 
-const {logout} = useAuthStore();
+  const { activeTab, selectedUser } = useChatStore();
 
-const handleLogout = () =>{
-  logout();
-}
+  const handleLogout = () => {
+    logout();
+  }
 
   return (
     <>
-      <div className=''>ChatPage</div>
-      <button className='w-40 bg-slate-500 text-white rounded-lg py-2.5 font-medium hover:bg-red-100 hover:text-black focus:ring-2 focus:ring-cyan-100' type='submit' onClick={handleLogout}>Logout</button>
+      <div className="relative w-full max-w-6xl h-[800px]">
+        <BorderAnimatedContainer >
+          {/* LEFT SIDE */}
+          <div className="w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col">
+            <ProfileHeader />
+            <ActiveTabSwitch />
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {activeTab === "chats" ? <ChatsList /> : <ContactList />}
+            </div>
+          </div>
+
+          {/* RIGHT SIDE */}
+          <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
+            {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+          </div>
+        </BorderAnimatedContainer>
+      </div>
+
     </>
   )
 }

@@ -1,7 +1,7 @@
 import cloudinary from "../lib/cloudinary.js";
 import Message from "../models/Message.js"
 import User from "../models/User.js"
-
+import mongoose from "mongoose";
 export const getAllcontacts = async (req, res) => {
 
   try {
@@ -66,6 +66,10 @@ export const getMessagesByUserId = async (req, res) => {
     const { id: userToChatId } = req.params;
     /* variable name {id} comes from /:id. whatever the routename would be the variable name.
    then we rename it using id:RENAMED-VALUE*/
+
+    if (!mongoose.Types.ObjectId.isValid(userToChatId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
 
     const messages = await Message.find({
       $or: [
