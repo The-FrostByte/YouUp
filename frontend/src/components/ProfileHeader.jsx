@@ -2,13 +2,14 @@ import { useState, useRef } from "react";
 import { LogOutIcon, VolumeOffIcon, Volume2Icon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import ProfilePictureLoader from "./ProfilePictureLoader";
 
 const mouseClickSound = new Audio("/sounds/mouse-click.mp3");
 
 
 function ProfileHeader() {
 
-  const { logout, authUser, updateProfile } = useAuthStore();
+  const { logout, authUser, updateProfile, isUpdating } = useAuthStore();
   const { isSoundEnabled, toggleSound } = useChatStore();
 
   const [selectedImg, setSelectedImg] = useState(null);
@@ -38,12 +39,23 @@ function ProfileHeader() {
         <div className="flex items-center gap-3">
           {/* AVATAR */}
           <div className="avatar online">
-            <button className="size-14 rounded-full overflow-hidden relative group"
-              onClick={() => fileInputRef.current.click()}>
-              <img src={selectedImg || authUser.profilePic || "/avatar.png"} alt="User Image" />
+            <button
+              disabled={isUpdating}
+              className="size-14 rounded-full overflow-hidden relative group"
+              onClick={() => fileInputRef.current.click()}
+            >
+              <img
+                src={selectedImg || authUser.profilePic || "/avatar.png"}
+                alt="User Image"
+              />
+
+              {/* Hover Change Text */}
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <span className="text-white text-xs">Change</span>
               </div>
+
+              {/* Loader Overlay */}
+              {isUpdating && <ProfilePictureLoader />}
             </button>
             <input
               type="file"
